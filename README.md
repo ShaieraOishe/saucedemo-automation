@@ -169,79 +169,21 @@ allure open allure-report
 After each run the Allure HTML report is generated at `allure-report/index.html`.
 
 The report includes:
-- ✅ Test results (pass / fail / broken)
-- 📸 Full-page screenshot on test completion
-- 📄 Text attachments (error messages, product names, price breakdowns)
-- 🎬 Video recording of each test (saved under `allure-results/videos/`)
-- 🪜 Step-by-step execution log for every test
+- Test results (pass / fail / broken)
+- Full-page screenshot on test completion
+-  Text attachments (error messages, product names, price breakdowns)
+-  Video recording of each test (saved under `allure-results/videos/`)
+-  Step-by-step execution log for every test
 
----
 
-## Test Scenarios
-
-### Q1 — Locked Out User (20 Marks)
-**File:** `tests/test_q1_locked_out_user.py`
-
-1. Navigate to https://www.saucedemo.com
-2. Enter username `locked_out_user` / password `secret_sauce`
-3. Click Login
-4. Assert error banner is visible
-5. Assert error text equals:
-   > `Epic sadface: Sorry, this user has been locked out.`
-6. Assert user remains on the login page
-
----
-
-### Q2 — Standard User Full Journey (50 Marks)
-**File:** `tests/test_q2_standard_user.py`
-
-1. Login as `standard_user`
-2. **Reset App State** via hamburger menu → verify cart is empty
-3. Add **3 specific items** to cart:
-   - Sauce Labs Backpack
-   - Sauce Labs Bike Light
-   - Sauce Labs Bolt T-Shirt
-4. Verify cart badge shows **3**
-5. Navigate → Cart → Checkout
-6. Fill customer info (John Doe, 12345)
-7. On **Overview page** verify:
-   - All 3 product names match
-   - Subtotal = sum of item prices
-   - Grand total = subtotal + tax
-8. Click **Finish** → verify success header:
-   > `Thank you for your order!`
-9. Navigate back → **Reset App State** (second time)
-10. **Logout** → verify login page
-
----
-
-### Q3 — Performance Glitch User (30 Marks)
-**File:** `tests/test_q3_performance_glitch_user.py`
-
-1. Login as `performance_glitch_user` (extended timeout for glitch delay)
-2. **Reset App State** → verify cart empty
-3. Sort products **Name (Z to A)**
-4. Add the **first product** from the sorted list to cart
-5. Navigate → Cart → Checkout
-6. Fill customer info (Jane Smith, 67890)
-7. On **Overview page** verify:
-   - Product name matches the selected item
-   - Subtotal = item price
-   - Grand total = subtotal + tax
-8. Click **Finish** → verify success header:
-   > `Thank you for your order!`
-9. Navigate back → **Reset App State** (second time)
-10. **Logout** → verify login page
-
----
 
 ## Credentials Reference
 
 | Username | Password | Status |
 |---|---|---|
-| `standard_user` | `secret_sauce` | ✅ Normal user |
-| `locked_out_user` | `secret_sauce` | 🔒 Blocked |
-| `performance_glitch_user` | `secret_sauce` | 🐢 Slow responses |
+| `standard_user` | `secret_sauce` |  Normal user |
+| `locked_out_user` | `secret_sauce` |  Blocked |
+| `performance_glitch_user` | `secret_sauce` | Slow responses |
 
 ---
 
