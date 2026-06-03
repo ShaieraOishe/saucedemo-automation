@@ -38,10 +38,12 @@ class InventoryPage:
         self.open_menu()
         self.page.click(self.RESET_APP_STATE)
         self.page.wait_for_timeout(500)
-        # Close menu after reset
-        if self.page.is_visible(self.MENU_CLOSE_BTN):
+        try:
+            self.page.wait_for_selector(self.MENU_CLOSE_BTN, state="visible", timeout=3000)
             self.page.click(self.MENU_CLOSE_BTN)
-            self.page.wait_for_timeout(300)
+            self.page.wait_for_selector(self.MENU_CLOSE_BTN, state="hidden", timeout=3000)
+        except Exception:
+            pass 
 
     @allure.step("Logout")
     def logout(self):

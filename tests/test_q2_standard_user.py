@@ -19,11 +19,8 @@ from pages.inventory_page import InventoryPage
 from pages.cart_page import CartPage
 from pages.checkout_page import CheckoutInfoPage, CheckoutOverviewPage, CheckoutCompletePage
 
-BASE_URL  = "https://www.saucedemo.com"
-PASSWORD  = "secret_sauce"
-USER      = "standard_user"
+USER = "standard_user"
 
-# Three specific products to add to the cart
 PRODUCTS_TO_ADD = [
     "Sauce Labs Backpack",
     "Sauce Labs Bike Light",
@@ -45,36 +42,34 @@ class TestStandardUserPurchase:
         "total price on the overview page, complete the purchase, verify the success "
         "message, then reset state and logout."
     )
-    def test_standard_user_full_journey(self, browser_context):
+    def test_standard_user_full_journey(self, browser_context, password):
         page = browser_context
 
-        # ── Page Objects ────────────────────────────────────────────────────
-        login_page      = LoginPage(page)
-        inventory_page  = InventoryPage(page)
-        cart_page       = CartPage(page)
-        checkout_info   = CheckoutInfoPage(page)
+        login_page        = LoginPage(page)
+        inventory_page    = InventoryPage(page)
+        cart_page         = CartPage(page)
+        checkout_info     = CheckoutInfoPage(page)
         checkout_overview = CheckoutOverviewPage(page)
-        complete_page   = CheckoutCompletePage(page)
+        complete_page     = CheckoutCompletePage(page)
 
-        # ── Step 1: Login ────────────────────────────────────────────────────
+        # Step 1: Login
         with allure.step(f"Login as '{USER}'"):
-            login_page.login(USER, PASSWORD)
+            login_page.login(USER, password)
             inventory_page.wait_for_page()
 
-        # ── Step 2: Reset App State ──────────────────────────────────────────
+        # Step 2: Reset App State
         with allure.step("Reset App State via hamburger menu"):
             inventory_page.reset_app_state()
             cart_count = inventory_page.get_cart_count()
             assert cart_count == 0, \
                 f"Cart should be empty after reset, but badge shows {cart_count}"
 
-        # ── Step 3: Add 3 products to cart ───────────────────────────────────
+        # Step 3: Add 3 products to cart
         expected_names  = []
         expected_prices = []
 
         for product_name in PRODUCTS_TO_ADD:
             with allure.step(f"Add '{product_name}' to cart"):
-                # Retrieve price before adding
                 all_names  = inventory_page.get_all_item_names()
                 all_prices = inventory_page.get_all_item_prices()
                 idx = all_names.index(product_name)
@@ -86,12 +81,12 @@ class TestStandardUserPurchase:
             count = inventory_page.get_cart_count()
             assert count == 3, f"Expected 3 items in cart, got {count}"
 
-        # ── Step 4: Navigate to Cart ─────────────────────────────────────────
+        # Step 4: Navigate to Cart
         with allure.step("Navigate to Cart page"):
             inventory_page.go_to_cart()
             cart_page.wait_for_page()
 
-        # ── Step 5: Proceed through Checkout Info ────────────────────────────
+        # Step 5: Proceed through Checkout Info
         with allure.step("Click Checkout button"):
             cart_page.proceed_to_checkout()
 
@@ -100,7 +95,7 @@ class TestStandardUserPurchase:
             checkout_info.fill_info("John", "Doe", "12345")
             checkout_info.continue_to_overview()
 
-        # ── Step 6: Verify on Overview Page ─────────────────────────────────
+        # Step 6: Verify on Overview Page
         with allure.step("Verify product names on Checkout Overview"):
             checkout_overview.wait_for_page()
             actual_names = checkout_overview.get_product_names()
@@ -108,12 +103,12 @@ class TestStandardUserPurchase:
             allure.attach(
                 "\n".join(expected_names),
                 name="Expected Product Names",
-                attachment_type=allure.attachment_type.TEXT
+                attachment_type=allure.attachment_type.TEXT,
             )
             allure.attach(
                 "\n".join(actual_names),
                 name="Actual Product Names",
-                attachment_type=allure.attachment_type.TEXT
+                attachment_type=allure.attachment_type.TEXT,
             )
 
             assert sorted(actual_names) == sorted(expected_names), (
@@ -123,9 +118,9 @@ class TestStandardUserPurchase:
             )
 
         with allure.step("Verify total price on Checkout Overview"):
-            actual_total    = checkout_overview.get_total()
-            actual_subtotal = checkout_overview.get_subtotal()
-            actual_tax      = checkout_overview.get_tax()
+            actual_total      = checkout_overview.get_total()
+            actual_subtotal   = checkout_overview.get_subtotal()
+            actual_tax        = checkout_overview.get_tax()
             expected_subtotal = round(sum(expected_prices), 2)
             expected_total    = round(expected_subtotal + actual_tax, 2)
 
@@ -139,7 +134,7 @@ class TestStandardUserPurchase:
                     f"Actual Total  : ${actual_total}"
                 ),
                 name="Price Breakdown",
-                attachment_type=allure.attachment_type.TEXT
+                attachment_type=allure.attachment_type.TEXT,
             )
 
             assert actual_subtotal == expected_subtotal, (
@@ -149,11 +144,11 @@ class TestStandardUserPurchase:
                 f"Total price mismatch! Expected ${expected_total}, got ${actual_total}"
             )
 
-        # ── Step 7: Finish Purchase ───────────────────────────────────────────
+        # Step 7: Finish Purchase
         with allure.step("Click Finish to complete the order"):
             checkout_overview.finish_purchase()
 
-        # ── Step 8: Verify Success Message ───────────────────────────────────
+        # Step 8: Verify Success Message
         with allure.step("Verify order success message"):
             complete_page.wait_for_page()
             assert complete_page.is_success_displayed(), \
@@ -165,7 +160,7 @@ class TestStandardUserPurchase:
             allure.attach(
                 f"Header: {success_header}\nText: {success_text}",
                 name="Success Confirmation",
-                attachment_type=allure.attachment_type.TEXT
+                attachment_type=allure.attachment_type.TEXT,
             )
 
             assert success_header == SUCCESS_HEADER, (
@@ -174,7 +169,7 @@ class TestStandardUserPurchase:
                 f"Actual  : '{success_header}'"
             )
 
-        # ── Step 9: Back to products, Reset State, Logout ────────────────────
+        # Step 9: Back to products, Reset State, Logout
         with allure.step("Navigate back to products page"):
             complete_page.back_to_products()
             inventory_page.wait_for_page()

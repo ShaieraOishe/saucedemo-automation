@@ -6,9 +6,7 @@ import allure
 import pytest
 from pages.login_page import LoginPage
 
-BASE_URL = "https://www.saucedemo.com"
-PASSWORD = "secret_sauce"
-LOCKED_USER = "locked_out_user"
+LOCKED_USER    = "locked_out_user"
 EXPECTED_ERROR = "Epic sadface: Sorry, this user has been locked out."
 
 
@@ -23,8 +21,8 @@ class TestLockedOutUser:
         "Attempt to login with 'locked_out_user' and verify that the correct "
         "error message is displayed on the login page."
     )
-    def test_locked_out_user_error_message(self, browser_context):
-        page = browser_context
+    def test_locked_out_user_error_message(self, browser_context, password):
+        page       = browser_context
         login_page = LoginPage(page)
 
         with allure.step("Navigate to SauceDemo login page"):
@@ -32,7 +30,7 @@ class TestLockedOutUser:
 
         with allure.step(f"Attempt login with username='{LOCKED_USER}'"):
             login_page.enter_username(LOCKED_USER)
-            login_page.enter_password(PASSWORD)
+            login_page.enter_password(password)
             login_page.click_login()
 
         with allure.step("Verify error banner is visible"):
@@ -44,12 +42,12 @@ class TestLockedOutUser:
             allure.attach(
                 actual_error,
                 name="Actual Error Message",
-                attachment_type=allure.attachment_type.TEXT
+                attachment_type=allure.attachment_type.TEXT,
             )
             allure.attach(
                 EXPECTED_ERROR,
                 name="Expected Error Message",
-                attachment_type=allure.attachment_type.TEXT
+                attachment_type=allure.attachment_type.TEXT,
             )
             assert actual_error == EXPECTED_ERROR, (
                 f"Error message mismatch!\n"
@@ -58,6 +56,7 @@ class TestLockedOutUser:
             )
 
         with allure.step("Verify user is still on login page (not redirected)"):
-            assert "saucedemo.com" in page.url, "User was unexpectedly redirected."
+            assert "saucedemo.com" in page.url, \
+                "User was unexpectedly redirected away from the login page."
             assert page.is_visible("#login-button"), \
                 "Login button not visible — user may have been logged in."
