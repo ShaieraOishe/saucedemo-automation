@@ -207,3 +207,4 @@ The report includes:
 | Tests timeout on Q3 | `performance_glitch_user` is intentionally slow — timeout is set to 60s |
 | `ModuleNotFoundError: pages` | Run pytest from the project root directory, not from inside `tests/` |
 | Port conflict on `allure open` | Use `allure open allure-report -p 9999` |
+  <img width="1351" height="757" alt="Screenshot 2026-06-03 at 12 41 00 PM" src="https://github.com/user-attachments/assets/e1616c07-ca4c-400b-baa2-de5a67454e42" />
